@@ -2,6 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { AdsDevice } from './adsDevice';
 import { AdsPlatform } from './adsPlatform';
 import * as Ads from 'node-ads';
+import { AdsArrayHandle } from './decs';
 
 
 /**
@@ -22,14 +23,14 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
     PositionState: 2,
   };
 
-  private targetPositionInitial = true
+  private targetPositionInitial = true;
 
   constructor(
     platform: AdsPlatform,
     accessory: PlatformAccessory,
     symname: string,
   ) {
-    super(platform, accessory, symname)
+    super(platform, accessory, symname);
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -39,7 +40,9 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
 
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
-    this.service = this.accessory.getService(this.platform.Service.WindowCovering) || this.accessory.addService(this.platform.Service.WindowCovering);
+    this.service = this.accessory.getService(
+      this.platform.Service.WindowCovering) ||
+      this.accessory.addService(this.platform.Service.WindowCovering);
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
@@ -48,7 +51,7 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
 
-    this.registerForNotifications()
+    this.registerForNotifications();
 
     // register handlers for the On/Off Characteristic
     this.service.getCharacteristic(this.platform.Characteristic.CurrentPosition)
@@ -61,14 +64,14 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
   }
 
   registerForNotifications() {
-    let notificationHandleActualPosition = {
-      bytelength: Ads.makeType('USINT'),
+    const notificationHandleActualPosition = {
+      bytelength: [Ads.makeType('USINT')],
       symname: this.symname + '.nActualPosition',
     };
-    let notificationHandleUp = {
+    const notificationHandleUp = {
       symname: this.symname + '.bBlindUp',
     };
-    let notificationHandleDown = {
+    const notificationHandleDown = {
       symname: this.symname + '.bBlindDown',
     };
     this.platform.client.notify(notificationHandleActualPosition);
@@ -76,55 +79,55 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
     this.platform.client.notify(notificationHandleDown);
   }
 
-  stateChanged(handle: any) {
-    this.platform.log.debug(handle.symname + " -- " + handle.value)
-    let prop = handle.symname.substring(handle.symname.lastIndexOf('.'))
-    this.platform.log.debug('prop', prop)
-    this.platform.log.debug('json', JSON.stringify(handle))
-    if (prop == '.nActualPosition') {
-      let value = 0
-      if(handle.value[0] != false) {
-        value = handle.value as number
+  stateChanged(handle: AdsArrayHandle) {
+    this.platform.log.debug(handle.symname + ' -- ' + handle.value);
+    const prop = handle.symname.substring(handle.symname.lastIndexOf('.'));
+    this.platform.log.debug('prop', prop);
+    this.platform.log.debug('json', JSON.stringify(handle));
+    if (prop === '.nActualPosition') {
+      let value = 0;
+      if(handle.value[0] !== false) {
+        value = handle.value[0] as number;
       }
-      this.states.CurrentPosition = 100 - value
-      this.platform.log.debug('CurrentPosition changed to', this.states.CurrentPosition)
-      this.platform.log.debug('TargetPosition is', this.states.TargetPosition)
+      this.states.CurrentPosition = 100 - value;
+      this.platform.log.debug('CurrentPosition changed to', this.states.CurrentPosition);
+      this.platform.log.debug('TargetPosition is', this.states.TargetPosition);
       this.service.updateCharacteristic(
         this.platform.Characteristic.CurrentPosition,
-        this.states.CurrentPosition
-      )
+        this.states.CurrentPosition,
+      );
       if( this.targetPositionInitial ) {
-        this.targetPositionInitial = false
-        this.states.TargetPosition = this.states.CurrentPosition
+        this.targetPositionInitial = false;
+        this.states.TargetPosition = this.states.CurrentPosition;
         this.service.updateCharacteristic(
           this.platform.Characteristic.TargetPosition,
-          this.states.TargetPosition
-        )
+          this.states.TargetPosition,
+        );
       }
 
       // work around
-      if( this.states.CurrentPosition == this.states.TargetPosition ) {
+      if( this.states.CurrentPosition === this.states.TargetPosition ) {
         this.states.PositionState = 2; // stopped
-        this.platform.log.debug('PositionState changed to ', this.states.PositionState)
+        this.platform.log.debug('PositionState changed to ', this.states.PositionState);
         this.service.updateCharacteristic(
           this.platform.Characteristic.PositionState,
-          this.states.PositionState
-        )
+          this.states.PositionState,
+        );
       }
     }
-    if (prop == '.bBlindUp' || prop == '.bBlindDown') {
+    if (prop === '.bBlindUp' || prop === '.bBlindDown') {
       this.states.PositionState = 2; // stopped
-      if (prop == '.bBlindUp' && handle.value[0]) {
+      if (prop === '.bBlindUp' && handle.value[0]) {
         this.states.PositionState = 2; // 1 going to max
       }
-      if (prop == '.bBlindDown' && handle.value[0]) {
+      if (prop === '.bBlindDown' && handle.value[0]) {
         this.states.PositionState = 2; // going to min
       }
-      this.platform.log.debug('PositionState changed to ', this.states.PositionState)
+      this.platform.log.debug('PositionState changed to ', this.states.PositionState);
       this.service.updateCharacteristic(
         this.platform.Characteristic.PositionState,
-        this.states.PositionState
-      )
+        this.states.PositionState,
+      );
     }
   }
 
@@ -133,33 +136,33 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
    * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
    */
   async setTargetPosition(value: CharacteristicValue) {
-    this.states.TargetPosition = value as number
+    this.states.TargetPosition = value as number;
 
     this.platform.log.debug('Setting Characteristic Target Position ->', value);
 
-    let handle = {
+    const handle = {
       bytelength: Ads.makeType('USINT'),
       symname: this.symname + '.nSetPosition',
       value: [100-this.states.TargetPosition],
     };
-    this.platform.log.debug('handle1', JSON.stringify(handle))
+    this.platform.log.debug('handle1', JSON.stringify(handle));
     this.platform.client.write(handle, (err) => {
       if (err) {
         this.platform.log.debug('error: ' + err);
       }
       this.platform.log.debug('handle1 returned');
-      let handle2 = {
+      const handle2 = {
         symname: this.symname + '.bPosition',
         value: [true],
       };
-      this.platform.log.debug('handle2', JSON.stringify(handle))
+      this.platform.log.debug('handle2', JSON.stringify(handle));
       this.platform.client.write(handle2, (err) => {
         if (err) {
           this.platform.log.debug('error: ' + err);
         }
         this.platform.log.debug('handle2 returned');
-      })
-    })
+      });
+    });
 
     this.platform.log.debug('Set Characteristic On ->', value);
   }
@@ -181,8 +184,8 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
     this.platform.log.debug(
       'Get Characteristic TargetPosition',
       this.symname,
-      this.states.TargetPosition)
-    return this.states.TargetPosition
+      this.states.TargetPosition);
+    return this.states.TargetPosition;
   }
 
   /**
@@ -200,7 +203,7 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
    */
   async getCurrentPosition(): Promise<CharacteristicValue> {
     // request value asynchronously
-    var handle = {
+    const handle = {
       bytelength: Ads.makeType('USINT'),
       symname: this.symname + '.nActualPosition',
     };
@@ -210,24 +213,24 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
 
     this.platform.client.read(handle, (err, handle) => {
       if (err) {
-        this.platform.log.error('error: ' + err)
-        return
+        this.platform.log.error('error: ' + err);
+        return;
       }
-      this.platform.log.debug('read getCurrentPosition: ' + JSON.stringify(handle))
-      this.platform.log.debug('read getCurrentPosition returned: ' + handle.value)
-      this.states.CurrentPosition = 100 - handle.value
+      this.platform.log.debug('read getCurrentPosition: ' + JSON.stringify(handle));
+      this.platform.log.debug('read getCurrentPosition returned: ' + handle.value);
+      this.states.CurrentPosition = 100 - handle.value;
       this.service.updateCharacteristic(
         this.platform.Characteristic.CurrentPosition,
-        this.states.CurrentPosition
-      )
-    })
+        this.states.CurrentPosition,
+      );
+    });
 
     this.platform.log.debug(
       'Get Characteristic CurrentPosition',
       this.symname,
-      this.states.CurrentPosition
-    )
-    return this.states.CurrentPosition
+      this.states.CurrentPosition,
+    );
+    return this.states.CurrentPosition;
   }
 
   /**
@@ -245,44 +248,43 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
    */
   async getPositionState(): Promise<CharacteristicValue> {
     // request value asynchronously
-    var handle = {
+    const handle = {
       symname: this.symname + '.bBlindUp',
     };
     this.platform.client.read(handle, (err, handle) => {
       if (err) {
-        this.platform.log.error('error: ' + err)
-        return
+        this.platform.log.error('error: ' + err);
+        return;
       }
       if(handle.value[0]) {
-        this.states.PositionState = 2
+        this.states.PositionState = 2;
         this.service.updateCharacteristic(
           this.platform.Characteristic.PositionState,
-          this.states.PositionState
-        )
-        return
+          this.states.PositionState,
+        );
+        return;
       }
-      var handle2 = {
+      const handle2 = {
         symname: this.symname + '.bBlindDown',
       };
       this.platform.client.read(handle2, (err, handle3) => {
         if (err) {
-          this.platform.log.error('error: ' + err)
-          return
+          this.platform.log.error('error: ' + err);
+          return;
         }
         if(handle3.value[0]) {
-          this.states.PositionState = 2
+          this.states.PositionState = 2;
+        } else {
+          this.states.PositionState = 2;
         }
-        else {
-          this.states.PositionState = 2
-        }
-        this.platform.log.info('updateCharacteristic PositionState' + this.states.PositionState)
+        this.platform.log.info('updateCharacteristic PositionState' + this.states.PositionState);
         this.service.updateCharacteristic(
           this.platform.Characteristic.PositionState,
-          this.states.PositionState
-        )
-        return
-      })
-    })
+          this.states.PositionState,
+        );
+        return;
+      });
+    });
 
     // if you need to return an error to show the device as "Not Responding" in the Home app:
     // throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -290,8 +292,8 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
     this.platform.log.debug(
       'Get Characteristic PositionState',
       this.symname,
-      this.states.PositionState
-    )
-    return this.states.PositionState
+      this.states.PositionState,
+    );
+    return this.states.PositionState;
   }
 }

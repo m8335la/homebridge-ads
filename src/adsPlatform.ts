@@ -5,6 +5,8 @@ import { AdsLightbulbDevice } from './adsLightbulbDevice';
 import { AdsVenetianBlindEx1Switch } from './adsVenetianBlindEx1Switch';
 import { AdsDevice } from './adsDevice';
 import * as Ads from 'node-ads';
+import { AdsClient } from './decs';
+
 
 
 /**
@@ -19,14 +21,14 @@ export class AdsPlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
   public readonly adsDevices: AdsDevice[] = [];
-  public client: any;
+  public client!: AdsClient;
 
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
-    this.log.debug('Finished initializing platform:', this.config.name)
+    this.log.debug('Finished initializing platform:', this.config.name);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -50,46 +52,43 @@ export class AdsPlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory);
   }
 
-  public write(handle: any, callback: (err: any) => void) {
+  public write(handle: object, callback: (err: object) => void) {
     // lock
-    this.client.write(handle, (err: any) => {
+    this.client.write(handle, (err: object) => {
       // unlock
-      callback(err)
-    })
+      callback(err);
+    });
   }
 
   connectToAds() {
-    this.log.info('connecting to ADS')
+    this.log.info('connecting to ADS');
     this.client = Ads.connect({
       host: this.config.host,
       amsNetIdTarget: this.config.amsNetIdTarget,
       amsNetIdSource: this.config.amsNetIdSource,
-      amsPortTarget: this.config.amsPortTarget
+      amsPortTarget: this.config.amsPortTarget,
     }, () => {
-        this.log.info('reading ADS state')
-        this.client.readState((error,result) => {
+      this.log.info('reading ADS state');
+      this.client.readState((error, result) => {
         if (error) {
-          this.log.error('error: ' + error)
+          this.log.error('error: ' + error);
         } else {
-          if (result.adsState == Ads.ADSSTATE.RUN) {
-            this.log.info('The PLC is lucky!')
+          if (result.adsState === Ads.ADSSTATE.RUN) {
+            this.log.info('The PLC is lucky!');
           }
-          this.log.info('The state is '+ Ads.ADSSTATE.fromId(result.adsState))
+          this.log.info('The state is '+ Ads.ADSSTATE.fromId(result.adsState));
         }
-        //this.end()
-      })
-      this.log.info('this.client')
-      this.log.info(this.client)
-    })
+      });
+    }) as AdsClient;
 
     this.client.on('error', (error) => {
       // log error
-      this.log.error('Error:', error)
-      this.log.info('retrying in five seconds')
+      this.log.error('Error:', error);
+      this.log.info('retrying in five seconds');
       setTimeout(() => {
-        this.connectToAds()
-      }, 5 * 1000)
-    })
+        this.connectToAds();
+      }, 5 * 1000);
+    });
   }
 
   /**
@@ -99,7 +98,7 @@ export class AdsPlatform implements DynamicPlatformPlugin {
    */
   discoverDevices() {
 
-    this.connectToAds()
+    this.connectToAds();
 
     for(const device of this.config.accessories) {
 
@@ -124,17 +123,17 @@ export class AdsPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         switch(device.type) {
           case 'adsLightbulb': {
-            let ads = new AdsLightbulbDevice(this, existingAccessory, device.symname)
-            this.adsDevices.push(ads)
-            break
+            const ads = new AdsLightbulbDevice(this, existingAccessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
           }
           case 'adsVenetianBlindEx1Switch': {
-            let ads = new AdsVenetianBlindEx1Switch(this, existingAccessory, device.symname)
-            this.adsDevices.push(ads)
-            break
+            const ads = new AdsVenetianBlindEx1Switch(this, existingAccessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
           }
           default: {
-            this.log.warn('Unknown device type', device.type)
+            this.log.warn('Unknown device type', device.type);
           }
         }
         // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
@@ -156,17 +155,17 @@ export class AdsPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         switch(device.type) {
           case 'adsLightbulb': {
-            let ads = new AdsLightbulbDevice(this, accessory, device.symname)
-            this.adsDevices.push(ads)
-            break
+            const ads = new AdsLightbulbDevice(this, accessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
           }
           case 'adsVenetianBlindEx1Switch': {
-            let ads = new AdsVenetianBlindEx1Switch(this, accessory, device.symname)
-            this.adsDevices.push(ads)
-            break
+            const ads = new AdsVenetianBlindEx1Switch(this, accessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
           }
           default: {
-            this.log.warn('Unknown device type', device.type)
+            this.log.warn('Unknown device type', device.type);
           }
         }
 
@@ -178,13 +177,13 @@ export class AdsPlatform implements DynamicPlatformPlugin {
     this.client.on('notification', (handle) => {
       this.log.info('notification', JSON.stringify(handle));
       this.adsDevices.forEach(obj => {
-        if(obj instanceof AdsLightbulbDevice && (obj as AdsLightbulbDevice).symname == handle.symname) {
-          (obj as AdsLightbulbDevice).stateChanged(handle)
+        if(obj instanceof AdsLightbulbDevice && (obj as AdsLightbulbDevice).symname === handle.symname) {
+          (obj as AdsLightbulbDevice).stateChanged(handle);
         }
         if(obj instanceof AdsVenetianBlindEx1Switch && handle.symname.startsWith((obj as AdsVenetianBlindEx1Switch).symname)) {
-          (obj as AdsVenetianBlindEx1Switch).stateChanged(handle)
+          (obj as AdsVenetianBlindEx1Switch).stateChanged(handle);
         }
-      })
+      });
     });
   }
 }

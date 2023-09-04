@@ -1,6 +1,5 @@
-import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import { PlatformAccessory } from 'homebridge';
 import { AdsPlatform } from './adsPlatform';
-import * as Ads from 'node-ads';
 
 
 export class AdsDevice {

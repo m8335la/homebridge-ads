@@ -1,7 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { AdsDevice } from './adsDevice';
 import { AdsPlatform } from './adsPlatform';
-import * as Ads from 'node-ads';
+import { AdsArrayHandle } from './decs';
 
 
 /**
@@ -25,7 +25,7 @@ export class AdsLightbulbDevice extends AdsDevice {
     accessory: PlatformAccessory,
     symname: string,
   ) {
-    super(platform, accessory, symname)
+    super(platform, accessory, symname);
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -44,7 +44,7 @@ export class AdsLightbulbDevice extends AdsDevice {
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
 
-    this.registerForNotifications()
+    this.registerForNotifications();
 
     // register handlers for the On/Off Characteristic
     this.service.getCharacteristic(this.platform.Characteristic.On)
@@ -53,17 +53,17 @@ export class AdsLightbulbDevice extends AdsDevice {
   }
 
   registerForNotifications() {
-    let notificationHandle = {
-      symname: this.symname
+    const notificationHandle = {
+      symname: this.symname,
     };
     this.platform.client.notify(notificationHandle);
   }
 
-  stateChanged(handle: any) {
-    let value = handle.value[0]
-    this.states.On = value
-    this.platform.log.debug('state changed to ' + value)
-    this.service.updateCharacteristic(this.platform.Characteristic.On, value)
+  stateChanged(handle: AdsArrayHandle) {
+    const value = handle.value[0] as boolean;
+    this.states.On = value;
+    this.platform.log.debug('state changed to ' + value);
+    this.service.updateCharacteristic(this.platform.Characteristic.On, value);
   }
 
   /**
@@ -74,7 +74,7 @@ export class AdsLightbulbDevice extends AdsDevice {
     this.states.On = value as boolean;
     this.platform.log.debug('Setting Characteristic On ->', value);
 
-    var handle = {
+    const handle = {
       symname: this.symname,
       value: [value],
     };
@@ -104,17 +104,17 @@ export class AdsLightbulbDevice extends AdsDevice {
     const isOn = this.states.On;
 
     // request value asynchronously
-    var handle = {
+    const handle = {
       symname: this.symname,
     };
     this.platform.client.read(handle, (err, handle) => {
       if (err) {
-        this.platform.log.error('error: ' + err)
-        return
+        this.platform.log.error('error: ' + err);
+        return;
       }
-      this.platform.log.debug('read returned: ' + handle.value[0])
-      this.states.On = handle.value[0]
-      this.service.updateCharacteristic(this.platform.Characteristic.On, handle.value[0])
+      this.platform.log.debug('read returned: ' + handle.value[0]);
+      this.states.On = handle.value[0];
+      this.service.updateCharacteristic(this.platform.Characteristic.On, handle.value[0]);
     });
 
     // if you need to return an error to show the device as "Not Responding" in the Home app:
