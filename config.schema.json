@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "HomebridgeAds",
   "pluginType": "platform",
   "singular": true,
   "schema": {
@@ -10,6 +10,61 @@
         "type": "string",
         "required": true,
         "default": "Example Dynamic Platform"
+      },
+      "host": {
+        "title": "Host",
+        "type": "string",
+        "required": true,
+        "placeholder": "127.0.0.1"
+      },
+      "amsNetIdTarget": {
+        "title": "AMS Net ID Target",
+        "type": "string",
+        "required": true,
+        "placeholder": "127.0.0.1.1.1"
+      },
+      "amsNetIdSource": {
+        "title": "AMS Net ID Source",
+        "type": "string",
+        "required": true,
+        "placeholder": "127.0.0.1.1.1"
+      },
+      "amsPortTarget": {
+        "title": "AMS Port",
+        "type": "integer",
+        "required": true,
+        "default": "801"
+      },
+      "accessories": {
+        "title": "Accessories",
+        "type": "array",
+        "items": {
+          "title": "Accessory",
+          "type": "object",
+          "properties": {
+            "type": {
+              "title": "Type",
+              "type": "string",
+              "oneOf": [
+                { "title": "Simple Lightbulb", "enum": ["adsLightbulb"] },
+                { "title": "Venetian Blinds", "enum": ["adsVenetianBlindEx1Switch"] }
+              ],
+              "required": true
+            },
+            "name": {
+              "title": "Name",
+              "type": "string",
+              "placeholder": "Name that should be suggested in Home",
+              "required": true
+            },
+            "symname": {
+              "title": "Symbol Name",
+              "type": "string",
+              "placeholder": "Name of the ADS symbol",
+              "required": true
+            }
+          }
+        }
       }
     }
   }
