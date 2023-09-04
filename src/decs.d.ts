@@ -8,9 +8,9 @@ declare class AdsClient {
   read(handle: object, cb: Function): void;
   readState(cb: Function): void;
   write(handle: object, cb: Function): void;
-}
+};
 
 declare type AdsArrayHandle = {
   symname: string;
   value: unknown[];
-}
+};
