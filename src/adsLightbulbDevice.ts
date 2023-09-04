@@ -113,8 +113,10 @@ export class AdsLightbulbDevice extends AdsDevice {
         return;
       }
       this.platform.log.debug('read returned: ' + handle.value[0]);
-      this.states.On = handle.value[0];
-      this.service.updateCharacteristic(this.platform.Characteristic.On, handle.value[0]);
+      this.states.On = handle.value[0] as boolean;
+      this.service.updateCharacteristic(
+        this.platform.Characteristic.On,
+        handle.value[0] as boolean);
     });
 
     // if you need to return an error to show the device as "Not Responding" in the Home app:

@@ -204,7 +204,7 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
   async getCurrentPosition(): Promise<CharacteristicValue> {
     // request value asynchronously
     const handle = {
-      bytelength: Ads.makeType('USINT'),
+      bytelength: [Ads.makeType('USINT')],
       symname: this.symname + '.nActualPosition',
     };
 
@@ -217,8 +217,8 @@ export class AdsVenetianBlindEx1Switch extends AdsDevice {
         return;
       }
       this.platform.log.debug('read getCurrentPosition: ' + JSON.stringify(handle));
-      this.platform.log.debug('read getCurrentPosition returned: ' + handle.value);
-      this.states.CurrentPosition = 100 - handle.value;
+      this.platform.log.debug('read getCurrentPosition returned: ' + handle.value[0]);
+      this.states.CurrentPosition = 100 - (handle.value[0] as number);
       this.service.updateCharacteristic(
         this.platform.Characteristic.CurrentPosition,
         this.states.CurrentPosition,
