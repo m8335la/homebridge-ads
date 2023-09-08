@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/m8335la/homebridge-ads.git"
+    "url": "git+https://github.com/m8335la/homebridge-ads.git"
   },
   "bugs": {
     "url": "https://github.com/m8335la/homebridge-ads/issues"

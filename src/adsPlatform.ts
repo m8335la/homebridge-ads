@@ -97,8 +97,9 @@ export class AdsPlatform implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
-
     this.connectToAds();
+
+    let staleAccessories = this.accessories.map((x) => x);
 
     for(const device of this.config.accessories) {
 
@@ -112,6 +113,7 @@ export class AdsPlatform implements DynamicPlatformPlugin {
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
       if (existingAccessory) {
+        staleAccessories = staleAccessories.filter((x) => x !== existingAccessory);
         // the accessory already exists
         this.log.info('Restoring existing accessory from cache:', device.name);
 
@@ -172,6 +174,13 @@ export class AdsPlatform implements DynamicPlatformPlugin {
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
+    }
+
+
+    // unregister stale Accessories
+    for(const staleAccessory of staleAccessories) {
+      this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [staleAccessory]);
+      this.log.info('Removing existing accessory from cache:', staleAccessory.displayName);
     }
 
     this.client.on('notification', (handle) => {
