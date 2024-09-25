@@ -1,6 +1,7 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
+import { AdsDimmableLightbulb } from './adsDimmableLightbulb';
 import { AdsLightbulbDevice } from './adsLightbulbDevice';
 import { AdsVenetianBlindEx1Switch } from './adsVenetianBlindEx1Switch';
 import { AdsDevice } from './adsDevice';
@@ -124,6 +125,11 @@ export class AdsPlatform implements DynamicPlatformPlugin {
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         switch(device.type) {
+          case 'adsDimmableLightbulb': {
+            const ads = new AdsDimmableLightbulb(this, existingAccessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
+          }
           case 'adsLightbulb': {
             const ads = new AdsLightbulbDevice(this, existingAccessory, device.symname);
             this.adsDevices.push(ads);
@@ -156,6 +162,11 @@ export class AdsPlatform implements DynamicPlatformPlugin {
         // create the accessory handler for the newly create accessory
         // this is imported from `platformAccessory.ts`
         switch(device.type) {
+          case 'adsDimmableLightbulb': {
+            const ads = new AdsDimmableLightbulb(this, accessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
+          }
           case 'adsLightbulb': {
             const ads = new AdsLightbulbDevice(this, accessory, device.symname);
             this.adsDevices.push(ads);
@@ -186,6 +197,9 @@ export class AdsPlatform implements DynamicPlatformPlugin {
     this.client.on('notification', (handle) => {
       this.log.info('notification', JSON.stringify(handle));
       this.adsDevices.forEach(obj => {
+        if(obj instanceof AdsDimmableLightbulb && handle.symname.startsWith((obj as AdsDimmableLightbulb).symname)) {
+          (obj as AdsDimmableLightbulb).stateChanged(handle);
+        }
         if(obj instanceof AdsLightbulbDevice && (obj as AdsLightbulbDevice).symname === handle.symname) {
           (obj as AdsLightbulbDevice).stateChanged(handle);
         }
