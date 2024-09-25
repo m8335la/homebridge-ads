@@ -47,6 +47,7 @@
               "type": "string",
               "oneOf": [
                 { "title": "Simple Lightbulb", "enum": ["adsLightbulb"] },
+                { "title": "Dimmable Lightbulb", "enum": ["adsDimmableLightbulb"] },
                 { "title": "Venetian Blinds", "enum": ["adsVenetianBlindEx1Switch"] }
               ],
               "required": true
