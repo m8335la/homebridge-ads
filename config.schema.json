@@ -48,7 +48,8 @@
               "oneOf": [
                 { "title": "Simple Lightbulb", "enum": ["adsLightbulb"] },
                 { "title": "Dimmable Lightbulb", "enum": ["adsDimmableLightbulb"] },
-                { "title": "Venetian Blinds", "enum": ["adsVenetianBlindEx1Switch"] }
+                { "title": "Venetian Blinds", "enum": ["adsVenetianBlindEx1Switch"] },
+                { "title": "Thermostat", "enum": ["adsThermostat"] }
               ],
               "required": true
             },
@@ -63,6 +64,18 @@
               "type": "string",
               "placeholder": "Name of the ADS symbol",
               "required": true
+            },
+            "dhtSensorType": {
+              "title": "DHT sensor type",
+              "type": "integer",
+              "placeholder": "11 or 22",
+              "required": false
+            },
+            "dhtSensorPin": {
+              "title": "DHT sensor PIN",
+              "type": "integer",
+              "placeholder": "",
+              "required": false
             }
           }
         }

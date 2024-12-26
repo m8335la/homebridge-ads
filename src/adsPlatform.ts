@@ -1,5 +1,4 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
-
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { AdsDimmableLightbulb } from './adsDimmableLightbulb';
 import { AdsLightbulbDevice } from './adsLightbulbDevice';
@@ -7,8 +6,7 @@ import { AdsVenetianBlindEx1Switch } from './adsVenetianBlindEx1Switch';
 import { AdsDevice } from './adsDevice';
 import * as Ads from 'node-ads';
 import { AdsClient } from './decs';
-
-
+import { AdsThermostat } from './adsThermostat';
 
 /**
  * HomebridgePlatform
@@ -140,6 +138,11 @@ export class AdsPlatform implements DynamicPlatformPlugin {
             this.adsDevices.push(ads);
             break;
           }
+          case 'adsThermostat': {
+            const ads = new AdsThermostat(this, existingAccessory, device.symname, device.dhtSensorPin, device.dhtSensorType);
+            this.adsDevices.push(ads);
+            break;
+          }
           default: {
             this.log.warn('Unknown device type', device.type);
           }
@@ -174,6 +177,11 @@ export class AdsPlatform implements DynamicPlatformPlugin {
           }
           case 'adsVenetianBlindEx1Switch': {
             const ads = new AdsVenetianBlindEx1Switch(this, accessory, device.symname);
+            this.adsDevices.push(ads);
+            break;
+          }
+          case 'adsThermostat': {
+            const ads = new AdsThermostat(this, accessory, device.symname, device.dhtSensorPin, device.dhtSensorType);
             this.adsDevices.push(ads);
             break;
           }
