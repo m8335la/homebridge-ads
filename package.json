@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge w/ Beckhoff TwinCAT ADS",
   "name": "homebridge-ads",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Link your Homebridge with your Beckhoff PLC running TwinCAT over ADS",
   "license": "Apache-2.0",
   "repository": {
