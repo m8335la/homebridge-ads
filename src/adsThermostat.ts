@@ -76,7 +76,7 @@ export class AdsThermostat extends AdsDevice {
     // this.sensor.initialize({
     //   test: {
     //     fake: {
-    //       temperature: 21,
+    //       temperature: 19.9,
     //       humidity: 60,
     //     },
     //   },
@@ -141,8 +141,8 @@ export class AdsThermostat extends AdsDevice {
           `humidity: ${res.humidity.toFixed(1)}%`,
         );
 
-        this.states.CurrentTemperature = res.temperature;
-        this.states.CurrentRelativeHumidity = res.humidity;
+        this.states.CurrentTemperature = res.temperature.toFixed(1);
+        this.states.CurrentRelativeHumidity = res.humidity.toFixed(1);
 
         let handleValue = false;
 
