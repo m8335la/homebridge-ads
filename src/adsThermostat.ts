@@ -1,8 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { AdsDevice } from './adsDevice';
 import { AdsPlatform } from './adsPlatform';
-import { Characteristic } from 'hap-nodejs';
-import { CurrentHeatingCoolingState, TargetHeatingCoolingState } from 'hap-nodejs/dist/lib/definitions';
+import { } from 'hap-nodejs/dist/lib/definitions';
 import * as NodeDhtSensor from 'node-dht-sensor';
 
 /**
@@ -17,10 +16,10 @@ export class AdsThermostat extends AdsDevice {
   private dhtSensorType: number;
 
   private states = {
-    CurrentHeatingCoolingState: Characteristic.CurrentHeatingCoolingState.OFF,
+    CurrentHeatingCoolingState: this.platform.Characteristic.CurrentHeatingCoolingState.OFF,
     CurrentRelativeHumidity: 42.42,
     CurrentTemperature: 14.2,
-    TargetHeatingCoolingState: TargetHeatingCoolingState.OFF,
+    TargetHeatingCoolingState: this.platform.Characteristic.TargetHeatingCoolingState.OFF,
     TargetTemperature: 24.2,
   };
 
@@ -62,8 +61,8 @@ export class AdsThermostat extends AdsDevice {
       .onGet(this.getTargetHeatingCoolingState.bind(this))
       .setProps({
         validValues: [
-          Characteristic.TargetHeatingCoolingState.OFF,
-          Characteristic.TargetHeatingCoolingState.HEAT,
+          this.platform.Characteristic.TargetHeatingCoolingState.OFF,
+          this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
         ],
       });
     this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
@@ -148,14 +147,14 @@ export class AdsThermostat extends AdsDevice {
         let handleValue = false;
 
         // evaluate current mode
-        if(this.states.TargetHeatingCoolingState === TargetHeatingCoolingState.OFF
+        if(this.states.TargetHeatingCoolingState === this.platform.Characteristic.TargetHeatingCoolingState.OFF
           || this.states.TargetTemperature <= this.states.CurrentTemperature) {
           // set to off
-          this.states.CurrentHeatingCoolingState = CurrentHeatingCoolingState.OFF;
+          this.states.CurrentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
           this.platform.log.debug('turning it OFF...');
         } else {
           // turn on
-          this.states.CurrentHeatingCoolingState = CurrentHeatingCoolingState.HEAT;
+          this.states.CurrentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
           handleValue = true;
           this.platform.log.debug('turning it ON...');
         }
