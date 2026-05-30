@@ -31,7 +31,8 @@
     "ads",
     "plc",
     "automation",
-    "smarthome"
+    "smarthome",
+    "lightbulb"
   ],
   "dependencies": {
     "homebridge-lib": "^7.1.0",
