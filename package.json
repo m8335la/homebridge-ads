@@ -32,7 +32,8 @@
     "plc",
     "automation",
     "smarthome",
-    "lightbulb"
+    "lightbulb",
+    "dimmable-lightbulb"
   ],
   "dependencies": {
     "homebridge-lib": "^7.1.0",
