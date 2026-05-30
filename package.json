@@ -4,6 +4,7 @@
   "version": "0.2.4",
   "description": "Link your Homebridge with your Beckhoff PLC running TwinCAT over ADS",
   "license": "Apache-2.0",
+  "homepage": "https://github.com/m8335la/homebridge-ads",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/m8335la/homebridge-ads.git"
@@ -12,8 +13,8 @@
     "url": "https://github.com/m8335la/homebridge-ads/issues"
   },
   "engines": {
-    "node": "^18.17.0 || ^22",
-    "homebridge": "^1.8.0"
+    "node": "^18.17.0 || ^22 || ^24",
+    "homebridge": "^1.8.0 || ^2.0.0"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +24,7 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin", "homebridge", "beckhoff", "twincat", "ads", "plc", "automation"
   ],
   "dependencies": {
     "homebridge-lib": "^7.1.0",

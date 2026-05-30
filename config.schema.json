@@ -4,35 +4,31 @@
   "singular": true,
   "schema": {
     "type": "object",
+    "required": ["name", "host", "amsNetIdTarget", "amsNetIdSource", "amsPortTarget"],
     "properties": {
       "name": {
         "title": "Name",
         "type": "string",
-        "required": true,
         "default": "Example Dynamic Platform"
       },
       "host": {
         "title": "Host",
         "type": "string",
-        "required": true,
         "placeholder": "127.0.0.1"
       },
       "amsNetIdTarget": {
         "title": "AMS Net ID Target",
         "type": "string",
-        "required": true,
         "placeholder": "127.0.0.1.1.1"
       },
       "amsNetIdSource": {
         "title": "AMS Net ID Source",
         "type": "string",
-        "required": true,
         "placeholder": "127.0.0.1.1.1"
       },
       "amsPortTarget": {
         "title": "AMS Port",
         "type": "integer",
-        "required": true,
         "default": "801"
       },
       "accessories": {
@@ -41,6 +37,7 @@
         "items": {
           "title": "Accessory",
           "type": "object",
+          "required": ["type", "name", "symname"],
           "properties": {
             "type": {
               "title": "Type",
@@ -51,31 +48,26 @@
                 { "title": "Venetian Blinds", "enum": ["adsVenetianBlindEx1Switch"] },
                 { "title": "Thermostat", "enum": ["adsThermostat"] }
               ],
-              "required": true
             },
             "name": {
               "title": "Name",
               "type": "string",
-              "placeholder": "Name that should be suggested in Home",
-              "required": true
+              "placeholder": "Name that should be suggested in Home"
             },
             "symname": {
               "title": "Symbol Name",
               "type": "string",
-              "placeholder": "Name of the ADS symbol",
-              "required": true
+              "placeholder": "Name of the ADS symbol"
             },
             "dhtSensorType": {
               "title": "DHT sensor type",
               "type": "integer",
-              "placeholder": "11 or 22",
-              "required": false
+              "placeholder": "11 or 22"
             },
             "dhtSensorPin": {
               "title": "DHT sensor PIN",
               "type": "integer",
-              "placeholder": "",
-              "required": false
+              "placeholder": ""
             }
           }
         }
