@@ -30,7 +30,8 @@
     "twincat",
     "ads",
     "plc",
-    "automation"
+    "automation",
+    "smarthome"
   ],
   "dependencies": {
     "homebridge-lib": "^7.1.0",
