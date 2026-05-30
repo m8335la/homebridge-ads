@@ -100,7 +100,11 @@ export class AdsPlatform implements DynamicPlatformPlugin {
 
     let staleAccessories = this.accessories.map((x) => x);
 
-    for(const device of this.config.accessories) {
+    const configAccessories = Array.isArray(this.config.accessories)
+      ? this.config.accessories
+      : [];
+
+    for(const device of configAccessories) {
 
       // generate a unique id for the accessory this should be generated from
       // something globally unique, but constant, for example, the device serial
